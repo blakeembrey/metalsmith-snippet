@@ -61,7 +61,7 @@ describe('metalsmith snippet', function () {
     it('should break on whitespace before the max length', function (done) {
       return snippet({ maxLength: 20 })(files, {}, function (err) {
         expect(files['test.html'].snippet).to.equal(
-          'This is some simple…'
+          'This is some simple&#8230;'
         );
 
         return done(err);
@@ -78,7 +78,7 @@ describe('metalsmith snippet', function () {
 
     it('should trim the comma before appending the suffix', function (done) {
       return snippet({ maxLength: 10 })(files, {}, function (err) {
-        expect(files['test.html'].snippet).to.equal('God, damn…');
+        expect(files['test.html'].snippet).to.equal('God, damn&#8230;');
 
         return done(err);
       });

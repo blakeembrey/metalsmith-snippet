@@ -1,6 +1,6 @@
 var extend   = require('extend');
 var extname  = require('path').extname;
-var entities = require('entities');
+var entities = require('ent');
 
 /**
  * Support creating excerpts from basic html.
@@ -39,7 +39,7 @@ module.exports = function (opts) {
  */
 function extractSnippet (contents, opts) {
   // Remove code sections, html tags and any additional whitespace.
-  contents = entities.decodeHTML(contents)
+  contents = entities.decode(contents)
     .replace(/<pre[^>]*>[\s\S]*?<\/pre>/g, '')
     .replace(/<[^>]+>/g, '')
     .replace(/\s+/, ' ')
@@ -47,7 +47,7 @@ function extractSnippet (contents, opts) {
 
   // If the total contents length is already shorted, return.
   if (contents.length < opts.maxLength) {
-    return entities.encodeHTML(contents);
+    return entities.encode(contents);
   }
 
   // Find the last whitespace break before the maximum length.
@@ -62,7 +62,7 @@ function extractSnippet (contents, opts) {
   // also trim trailing punctuation characters.
   contents = contents.substr(0, nonWordIndex).replace(/[,\.!?;]+$/, '');
 
-  return entities.encodeHTML(contents + opts.suffix);
+  return entities.encode(contents + opts.suffix);
 }
 
 /**

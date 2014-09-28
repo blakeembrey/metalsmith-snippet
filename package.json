@@ -31,7 +31,7 @@
     "mocha": "^1.21.4"
   },
   "dependencies": {
-    "entities": "^1.1.1",
+    "ent": "^2.0.0",
     "extend": "^1.3.0"
   }
 }
