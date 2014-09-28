@@ -23,8 +23,8 @@ Install via npm and then add `metalsmith-snippet` to your `metalsmith.json`:
 {
   "plugins": {
     "metalsmith-snippet": {
-      maxLength: 300,
-      suffix: '...'
+      "maxLength": 300,
+      "suffix": "..."
     }
   }
 }
