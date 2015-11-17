@@ -103,4 +103,52 @@ describe('metalsmith snippet', function () {
       });
     });
   });
+
+  describe('stop at substring default', function () {
+    var files = {
+      'test.html': {
+        contents: 'Hello, world!<span class="more"></span> This stops before printing this.'
+      }
+    };
+
+    it('should trim to before the span', function (done) {
+      return snippet({ stopAtSubstring: true })(files, {}, function (err) {
+        expect(files['test.html'].snippet).to.equal('Hello, world!');
+
+        return done(err);
+      });
+    });
+  });
+
+  describe('stop at earliest substring', function () {
+    var files = {
+      'test.html': {
+        contents: 'Hello, <hr>world! <span class="more"></span>This stops after Hello, '
+      }
+    };
+
+    it('should trim to "Hello, "', function (done) {
+      return snippet({ stopAtSubstring: true })(files, {}, function (err) {
+        expect(files['test.html'].snippet).to.equal('Hello, ');
+
+        return done(err);
+      });
+    });
+  });
+
+  describe('should allow custom stops', function () {
+    var files = {
+      'test.html': {
+        contents: 'Hello, world! <span class="more"></span>This will print some of this sentence.'
+      }
+    };
+
+    it('should trim to before the word "some"', function (done) {
+      return snippet({ stopAtSubstring: true, stops: ['some']})(files, {}, function (err) {
+        expect(files['test.html'].snippet).to.equal('Hello, world! <span class="more"></span>This will print ');
+
+        return done(err);
+      });
+    });
+  });
 });

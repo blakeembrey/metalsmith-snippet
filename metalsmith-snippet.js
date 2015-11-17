@@ -11,7 +11,9 @@ var entities = require('ent');
 module.exports = function (opts) {
   opts = extend({
     suffix: '…',
-    maxLength: 300
+    maxLength: 300,
+    stopAtSubstring: false,
+    stops: ['<span class="more', '<h2', '<hr']
   }, opts);
 
   return function (files, metalsmith, done) {
@@ -38,6 +40,22 @@ module.exports = function (opts) {
  * @return {String}
  */
 function extractSnippet (contents, opts) {
+  if (opts.stopAtSubstring) {
+    return trimToSubstring(contents, opts);
+  }
+  else {
+    return trimToLength(contents, opts);
+  }
+}
+
+/**
+ * Trims to a specified maxLength with optional suffix
+ *
+ * @param  {String} contents
+ * @param  {Object} opts
+ * @return {String}
+ */
+function trimToLength (contents, opts) {
   // Remove code sections, html tags and any additional whitespace.
   contents = entities.decode(contents)
     .replace(/<pre[^>]*>[\s\S]*?<\/pre>/g, '')
@@ -63,6 +81,35 @@ function extractSnippet (contents, opts) {
   contents = contents.substr(0, nonWordIndex).replace(/[,\.!?;]+$/, '');
 
   return entities.encode(contents + opts.suffix);
+}
+
+/**
+ * Trims to the content before a specified substring or array of substrings
+ *
+ * @param  {String} contents
+ * @param  {Object} opts
+ * @return {String}
+ */
+function trimToSubstring (contents, opts) {
+    contents = contents.trim();
+
+    // Make sure stops is an Array
+    if (opts.stops.constructor !== Array) {
+      opts.stops = [opts.stops];
+    }
+
+    var idx = Infinity;
+    // Find the earliest stopping point
+    opts.stops.forEach(function (stop) {
+      var i = contents.indexOf(stop);
+      if (i !== -1 && i < idx) {
+        idx = i;
+      }
+    });
+
+    // Don't add the suffix or trim trailing characters.
+    // The content has already decided where it wants to stop.
+    return idx !== Infinity ? contents.substr(0, idx) : contents;
 }
 
 /**
